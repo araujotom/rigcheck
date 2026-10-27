@@ -239,15 +239,24 @@ site: Netlify installs its OpenNext adapter automatically, so there is no plugin
 to add or version to pin. `netlify.toml` sets the build command, the `.next`
 publish directory and Node 22.
 
-Set `NEXT_PUBLIC_SITE_URL` to the public origin **before the first build**.
-Without it, canonical links, `sitemap.xml`, `robots.txt` and the generated social
-images point at `http://localhost:3000`. Changing it later requires a redeploy
-because the value is inlined at build time.
+Netlify exposes the site's primary address as `URL` during the build, and
+`lib/site.ts` uses it automatically, so a first Git deploy gets correct canonical
+links without extra setup. `NEXT_PUBLIC_SITE_URL` overrides it when you want to
+force an origin (or on a host that does not provide `URL`). Both values are
+inlined at build time, so changing them requires a redeploy.
+
+### Git integration
+
+Push the project to GitHub, GitLab or Bitbucket, then choose **Add new site →
+Import an existing project** in the Netlify dashboard. Netlify detects Next.js
+from `package.json` and uses `netlify.toml` for the build settings. Later pushes
+redeploy automatically. Optionally set `NEXT_PUBLIC_SITE_URL` under **Site
+configuration → Environment variables** if you want to override the detected
+URL.
 
 ### Netlify CLI
 
-Use this path if the project is not in a Git repository. `npx` downloads the
-CLI on demand.
+`npx` downloads the CLI on demand.
 
 ```bash
 npx netlify-cli login
@@ -258,16 +267,9 @@ npx netlify-cli deploy --build --prod
 ```
 
 Replace `rigcheck` with a free site name and use the exact URL Netlify assigns.
-If `sites:create` already linked the folder, `link` just confirms it. To update
-the site later, run the last command again.
-
-### Git integration
-
-Push the project to GitHub, GitLab or Bitbucket, then choose **Add new site →
-Import an existing project** in the Netlify dashboard. Netlify detects Next.js
-from `package.json` and uses `netlify.toml` for the build settings. Add
-`NEXT_PUBLIC_SITE_URL` under **Site configuration → Environment variables**
-before the first deploy; later pushes redeploy automatically.
+If `sites:create` already linked the folder, `link` just confirms it. The
+`env:set` step is optional but makes the canonical origin explicit for locally
+built CLI deploys. To update the site later, run the last command again.
 
 ### After the first deploy
 
@@ -276,7 +278,7 @@ before the first deploy; later pushes redeploy automatically.
   (the 404 page).
 - Confirm Steam cover art loads; images are optimized through Netlify's Image
   CDN using the remote pattern in `next.config.ts`.
-- When you attach a custom domain, update `NEXT_PUBLIC_SITE_URL` to that origin
-  and redeploy.
+- When you attach a custom domain, Netlify's `URL` follows it on the next build.
+  Redeploy, and update `NEXT_PUBLIC_SITE_URL` too if you set an explicit override.
 
 Any other Node host works too: `npm run build && npm start`.
