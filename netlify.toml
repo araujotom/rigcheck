@@ -1,0 +1,8 @@
+# Netlify builds Next.js through the OpenNext adapter, which is installed and
+# updated automatically. Do not pin @netlify/plugin-nextjs here.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"

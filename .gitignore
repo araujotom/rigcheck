@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+build/
+
+# Netlify CLI state
+.netlify/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# environment
+.env
+.env*.local
+!.env.example
+
+# editors / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
